@@ -165,30 +165,28 @@ NEXT_PUBLIC_API_URL=http://localhost:8080
 ## 📸 Screenshots
 
 ### 1. Login Page
-![Login Page](screenshots/login.png)
-*User authentication with email and password*
+![Login Page](assets readme/signup.jpeg)
 
 ### 2. Register Page
-![Register Page](screenshots/register.png)
-*New user registration form*
+![Register Page](assets readme/tampilan7.jpeg)
 
 ### 3. Dashboard - Notes List
-![Dashboard](screenshots/dashboard.png)
-*Main dashboard showing user's notes and shared notes*
+![Dashboard](assets readme/tampilan.jpeg)
 
 ### 4. Create Note
-![Create Note](screenshots/create-note.png)
-*Form to create new note*
+![Create Note](assets readme/tampilan2.jpeg)
 
 ### 5. Note Detail & Edit
-![Note Detail](screenshots/note-detail.png)
-*View and edit note details (owner only)*
+![Note Detail](assets readme/tampilan3.jpeg)
 
 ### 6. Database Logs
-![Database Logs](screenshots/logs.png)
-*HTTP request logs stored in PostgreSQL*
+![Database Logs](assets readme/tampilan4.jpeg)
 
-> 📝 **Note:** Screenshots akan ditambahkan di folder `screenshots/` setelah deployment.
+### 7. Database Logs
+![Database Logs](assets readme/tampilan6.jpeg)
+
+### 8. Database Logs
+![Database Logs](assets readme/tampilan5.jpeg)
 
 ## 📋 Logging System Examples
 
