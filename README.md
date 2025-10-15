@@ -4,142 +4,168 @@ Full-stack web application untuk berbagi catatan dengan fitur authentication, CR
 
 **Tech Stack:** Next.js (Frontend) | Golang (Backend) | PostgreSQL (Database) | Docker
 
-## 🚀 Setup Instructions
+## ✨ Fitur Aplikasi
 
-### Option 1: Docker (Recommended) ⭐
+### 1. Registrasi & Login User (JWT Authentication)
+- ✅ Registrasi user baru dengan nama, email, dan password
+- ✅ Login user dengan JWT token
+- ✅ Password di-hash menggunakan bcrypt
+- ✅ Protected routes dengan JWT middleware
 
-**Prerequisites:**
-- Docker Desktop installed
-- Docker Compose installed
-- Git installed
+### 2. CRUD Notes
+- ✅ **Create** - Buat catatan baru (user yang login)
+- ✅ **Read** - Lihat semua catatan (public sharing)
+- ✅ **Update** - Edit catatan (hanya pemilik)
+- ✅ **Delete** - Hapus catatan (hanya pemilik)
 
-**Step-by-step:**
+### 3. Database PostgreSQL dengan Docker
+- ✅ PostgreSQL 15 running di Docker container
+- ✅ Persistent volume untuk data
+- ✅ Database initialization otomatis
+- ✅ Tables: users, notes, logs
+
+### 4. Logging System
+- ✅ Mencatat setiap HTTP request ke database
+- ✅ Log berisi: datetime, method, endpoint, headers, payload, response, status_code
+- ✅ Authorization header di-mask untuk keamanan
+- ✅ Password di-mask di log payload
+
+## 🚀 Cara Menjalankan Aplikasi
+
+### Opsi 1: Menggunakan Docker (Direkomendasikan) ⭐
+
+**Prasyarat:**
+- Docker Desktop sudah terinstall
+- Docker Compose sudah terinstall
+- Git sudah terinstall
+
+**Langkah-langkah:**
 
 ```bash
 # 1. Clone repository
 git clone https://github.com/quiettira/PROJECTSPKL.git
 cd PROJECTSPKL
 
-# 2. Verify docker-compose.yml exists
+# 2. Verifikasi file docker-compose.yml ada
 ls docker-compose.yml
 
-# 3. Start all services with one command
+# 3. Jalankan semua service dengan satu perintah
 docker-compose up -d --build
 
-# 4. Check services status
+# 4. Cek status services
 docker-compose ps
 
-# 5. View logs (optional)
+# 5. Lihat logs (opsional)
 docker-compose logs -f
 ```
 
-**Access the application:**
+**Akses aplikasi:**
 - 🌐 **Frontend:** http://localhost:3000
 - 🔧 **Backend API:** http://localhost:8080
 - 🗄️ **Database:** localhost:5433 (user: admin, password: 123456)
 
-**Wait 1-2 minutes** for all services to become healthy, then access the frontend!
+**Tunggu 1-2 menit** agar semua service siap, lalu akses frontend!
 
-**Stopping services:**
+**Menghentikan services:**
 ```bash
-# Stop all services
+# Hentikan semua services
 docker-compose down
 
-# Stop and remove volumes (clean slate)
+# Hentikan dan hapus volumes (reset data)
 docker-compose down -v
 ```
 
-### Option 2: Local Development
+### Opsi 2: Development Lokal
 
-**Prerequisites:**
-- Go 1.21+ installed
-- Node.js 18+ and npm installed
-- PostgreSQL 15+ installed and running
+**Prasyarat:**
+- Go 1.21+ sudah terinstall
+- Node.js 18+ dan npm sudah terinstall
+- PostgreSQL 15+ sudah terinstall dan berjalan
 
-#### Step 1: Setup Database
+#### Langkah 1: Setup Database
 
 ```bash
-# Create database
+# Buat database
 psql -U postgres
 CREATE DATABASE notesdb;
 CREATE USER admin WITH PASSWORD '123456';
 GRANT ALL PRIVILEGES ON DATABASE notesdb TO admin;
 \q
 
-# Run initialization script
+# Jalankan script inisialisasi
 psql -U admin -d notesdb -f init.sql
 ```
 
-#### Step 2: Setup Backend
+#### Langkah 2: Setup Backend
 
 ```bash
-# Navigate to backend directory
+# Masuk ke direktori backend
 cd notes-backend
 
 # Install dependencies
 go mod download
 
-# Copy environment file
+# Copy file environment
 cp .env.example .env
 
-# Edit .env file with your database credentials
+# Edit file .env dengan kredensial database Anda
 # DATABASE_URL=postgres://admin:123456@localhost:5432/notesdb?sslmode=disable
 # PORT=8080
 # JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 
-# Run backend
+# Jalankan backend
 go run main.go
 ```
 
-Backend will start on **http://localhost:8080**
+Backend akan berjalan di **http://localhost:8080**
 
-#### Step 3: Setup Frontend
+#### Langkah 3: Setup Frontend
 
 ```bash
-# Open new terminal
-# Navigate to frontend directory
+# Buka terminal baru
+# Masuk ke direktori frontend
 cd notes-frontend
 
 # Install dependencies
 npm install
 
-# Copy environment file
+# Copy file environment
 cp .env.local.example .env.local
 
-# Edit .env.local file
+# Edit file .env.local
 # NEXT_PUBLIC_API_URL=http://localhost:8080
 
-# Run development server
+# Jalankan development server
 npm run dev
 ```
 
-Frontend will start on **http://localhost:3000**
+Frontend akan berjalan di **http://localhost:3000**
 
 ## 🔧 Contoh Environment Variables (.env)
 
 #### Backend (.env)
 
-**For Docker deployment:**
+**Untuk deployment Docker:**
 ```env
-# Database Configuration
+# Konfigurasi Database
 DATABASE_URL=postgres://admin:123456@postgres:5432/notesdb?sslmode=disable
 
-# Server Configuration
+# Konfigurasi Server
 PORT=8080
 
-# JWT Secret (change this in production!)
+# JWT Secret (ganti ini di production!)
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-min-32-chars
 ```
 
-**For local development:**
+**Untuk development lokal:**
 ```env
-# Database Configuration (note: localhost instead of postgres)
+# Konfigurasi Database (catatan: localhost bukan postgres)
 DATABASE_URL=postgres://admin:123456@localhost:5432/notesdb?sslmode=disable
 
-# Server Configuration
+# Konfigurasi Server
 PORT=8080
 
-# JWT Secret (change this in production!)
+# JWT Secret (ganti ini di production!)
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-min-32-chars
 ```
 
@@ -147,22 +173,22 @@ JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-min-32-chars
 
 #### Frontend (.env.local)
 
-**For Docker deployment:**
+**Untuk deployment Docker:**
 ```env
-# Backend API URL (using Docker service name)
+# Backend API URL (menggunakan nama service Docker)
 NEXT_PUBLIC_API_URL=http://backend:8080
 ```
 
-**For local development:**
+**Untuk development lokal:**
 ```env
-# Backend API URL (using localhost)
+# Backend API URL (menggunakan localhost)
 NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
 
 > 📝 **Note:** File `.env.local.example` tersedia di folder `notes-frontend/` sebagai template.
 
 
-## 📸 Screenshots
+## 📸 Tampilan Aplikasi
 
 ![Login Page](assets-readme/signup.jpeg)
 
@@ -180,9 +206,9 @@ NEXT_PUBLIC_API_URL=http://localhost:8080
 
 ![Database Logs](assets-readme/tampilan5.jpeg)
 
-## 📋 Logging System Examples
+## 📋 Contoh Logging System
 
-### Log Entry Structure
+### Struktur Log Entry
 
 Setiap HTTP request akan dicatat ke database dengan struktur berikut:
 
@@ -199,9 +225,9 @@ Setiap HTTP request akan dicatat ke database dengan struktur berikut:
 }
 ```
 
-### Sample Log Entries
+### Contoh Log Entries
 
-#### 1. User Registration
+#### 1. Registrasi User
 ```json
 {
   "datetime": "2025-10-15 11:20:15",
@@ -214,7 +240,7 @@ Setiap HTTP request akan dicatat ke database dengan struktur berikut:
 }
 ```
 
-#### 2. User Login
+#### 2. Login User
 ```json
 {
   "datetime": "2025-10-15 11:21:30",
@@ -227,7 +253,7 @@ Setiap HTTP request akan dicatat ke database dengan struktur berikut:
 }
 ```
 
-#### 3. Create Note (Authenticated)
+#### 3. Buat Catatan (Terautentikasi)
 ```json
 {
   "datetime": "2025-10-15 11:22:45",
@@ -240,7 +266,7 @@ Setiap HTTP request akan dicatat ke database dengan struktur berikut:
 }
 ```
 
-#### 4. Get All Notes
+#### 4. Ambil Semua Catatan
 ```json
 {
   "datetime": "2025-10-15 11:23:10",
@@ -253,7 +279,7 @@ Setiap HTTP request akan dicatat ke database dengan struktur berikut:
 }
 ```
 
-#### 5. Update Note
+#### 5. Update Catatan
 ```json
 {
   "datetime": "2025-10-15 11:24:20",
@@ -266,7 +292,7 @@ Setiap HTTP request akan dicatat ke database dengan struktur berikut:
 }
 ```
 
-#### 6. Delete Note
+#### 6. Hapus Catatan
 ```json
 {
   "datetime": "2025-10-15 11:25:00",
@@ -279,16 +305,16 @@ Setiap HTTP request akan dicatat ke database dengan struktur berikut:
 }
 ```
 
-### Viewing Logs
+### Cara Melihat Logs
 
-**Via API:**
+**Melalui API:**
 ```bash
 curl http://localhost:8080/admin/logs
 ```
 
-**Via Database:**
+**Melalui Database:**
 ```bash
-# Access PostgreSQL
+# Akses PostgreSQL
 docker-compose exec postgres psql -U admin -d notesdb
 
 # Query logs
@@ -298,7 +324,7 @@ ORDER BY datetime DESC
 LIMIT 10;
 ```
 
-**Sample Output:**
+**Contoh Output:**
 ```
  id |        datetime         | method |  endpoint   | status_code 
 ----+-------------------------+--------+-------------+-------------
@@ -310,11 +336,11 @@ LIMIT 10;
   1 | 2025-10-15 11:20:15.678 | POST   | /register   |         201
 ```
 
-**Security Features:**
-- ✅ Authorization headers are masked (JWT tokens tidak disimpan plaintext)
-- ✅ Passwords are masked in logs
-- ✅ Complete request tracking dengan timestamp UTC
+**Fitur Keamanan Logging:**
+- ✅ Authorization headers di-mask (JWT tokens tidak disimpan plaintext)
+- ✅ Password di-mask di logs
+- ✅ Tracking lengkap setiap request dengan timestamp UTC
 
 ---
 
-**Created for Bootcamp Selection Test**
+**Dibuat untuk Bootcamp Selection Test**
