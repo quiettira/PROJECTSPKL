@@ -165,28 +165,28 @@ NEXT_PUBLIC_API_URL=http://localhost:8080
 ## 📸 Screenshots
 
 ### 1. Login Page
-![Login Page](assets readme/signup.jpeg)
+![Login Page](assets-readme/signup.jpeg)
 
 ### 2. Register Page
-![Register Page](assets readme/tampilan7.jpeg)
+![Register Page](assets-readme/tampilan7.jpeg)
 
 ### 3. Dashboard - Notes List
-![Dashboard](assets readme/tampilan.jpeg)
+![Dashboard](assets-readme/tampilan.jpeg)
 
 ### 4. Create Note
-![Create Note](assets readme/tampilan2.jpeg)
+![Create Note](assets-readme/tampilan2.jpeg)
 
 ### 5. Note Detail & Edit
-![Note Detail](assets readme/tampilan3.jpeg)
+![Note Detail](assets-readme/tampilan3.jpeg)
 
 ### 6. Database Logs
-![Database Logs](assets readme/tampilan4.jpeg)
+![Database Logs](assets-readme/tampilan4.jpeg)
 
 ### 7. Database Logs
-![Database Logs](assets readme/tampilan6.jpeg)
+![Database Logs](assets-readme/tampilan6.jpeg)
 
 ### 8. Database Logs
-![Database Logs](assets readme/tampilan5.jpeg)
+![Database Logs](assets-readme/tampilan5.jpeg)
 
 ## 📋 Logging System Examples
 
