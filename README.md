@@ -315,7 +315,7 @@ curl http://localhost:8080/admin/logs
 **Melalui Database:**
 ```bash
 # Akses PostgreSQL
-docker-compose exec postgres psql -U admin -d notesdb
+docker-compose exec db psql -U admin -d notesdb
 
 # Query logs
 SELECT id, datetime, method, endpoint, status_code 
