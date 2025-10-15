@@ -1,0 +1,43 @@
+services:
+  # 🐘 Database PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: notesapp-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: notesdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 🚀 Backend (Golang)
+  backend:
+    build: ./notes-backend
+    container_name: notesapp-backend
+    restart: always
+    environment:
+      DATABASE_URL: "postgres://admin:123456@db:5432/notesdb?sslmode=disable"
+      PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  # 🌐 Frontend (Next.js)
+  frontend:
+    build: ./notes-frontend
+    container_name: notesapp-frontend
+    restart: always
+    environment:
+      NEXT_PUBLIC_API_URL: "http://localhost:8080"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+# Volume untuk PostgreSQL data persistence
+volumes:
+  postgres_data:
