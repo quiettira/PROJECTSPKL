@@ -2,414 +2,329 @@
 
 Full-stack web application untuk berbagi catatan dengan fitur authentication, CRUD operations, dan logging system.
 
-## 🚀 Tech Stack
+**Tech Stack:** Next.js (Frontend) | Golang (Backend) | PostgreSQL (Database) | Docker
 
-- **Frontend:** Next.js 15 (React)
-- **Backend:** Golang (Fiber framework)
-- **Database:** PostgreSQL
-- **Authentication:** JWT
-- **Deployment:** Docker & Docker Compose
-
-## ✨ Features
-
-### Authentication
-- ✅ User registration
-- ✅ User login with JWT
-- ✅ Password hashing (bcrypt)
-- ✅ Protected routes
-
-### Notes Management
-- ✅ Create notes (authenticated users)
-- ✅ View all notes (public sharing)
-- ✅ View note details
-- ✅ Edit notes (owner only)
-- ✅ Delete notes (owner only)
-
-### Logging System
-- ✅ Log semua HTTP requests
-- ✅ Log disimpan ke database PostgreSQL
-- ✅ Mencatat: datetime, method, endpoint, headers, payload, response, status code
-- ✅ Authorization header di-mask untuk security
-
-## 📁 Project Structure
-
-```
-PROJECTSPKL/
-├── notes-backend/           # Golang REST API
-│   ├── internal/
-│   │   ├── database/       # Database connection
-│   │   ├── handlers/       # HTTP handlers
-│   │   ├── middleware/     # JWT & Logging middleware
-│   │   └── models/         # Data models
-│   ├── main.go
-│   ├── Dockerfile
-│   └── .env
-│
-├── notes-frontend/          # Next.js application
-│   ├── src/
-│   │   ├── app/           # Pages & routes
-│   │   ├── components/    # React components
-│   │   └── lib/          # API utilities
-│   ├── Dockerfile
-│   └── .env.local
-│
-├── docker-compose.yml       # Docker orchestration
-├── init.sql                # Database initialization
-└── README.md
-```
-
-## 🏃 Quick Start
+## 🚀 Setup Instructions
 
 ### Option 1: Docker (Recommended) ⭐
 
+**Prerequisites:**
+- Docker Desktop installed
+- Docker Compose installed
+- Git installed
+
+**Step-by-step:**
+
 ```bash
-# Clone repository
-git clone <repository-url>
+# 1. Clone repository
+git clone https://github.com/quiettira/PROJECTSPKL.git
 cd PROJECTSPKL
 
-# Start all services with one command
+# 2. Verify docker-compose.yml exists
+ls docker-compose.yml
+
+# 3. Start all services with one command
 docker-compose up -d --build
 
-# Or use deployment script (Windows)
-.\deploy.ps1 build
+# 4. Check services status
+docker-compose ps
 
-# Access application
-# Frontend: http://localhost:3000
-# Backend: http://localhost:8080
-# Database: localhost:5433
+# 5. View logs (optional)
+docker-compose logs -f
 ```
+
+**Access the application:**
+- 🌐 **Frontend:** http://localhost:3000
+- 🔧 **Backend API:** http://localhost:8080
+- 🗄️ **Database:** localhost:5433 (user: admin, password: 123456)
 
 **Wait 1-2 minutes** for all services to become healthy, then access the frontend!
 
-### Option 2: Manual Setup
-
-#### Backend
+**Stopping services:**
 ```bash
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes (clean slate)
+docker-compose down -v
+```
+
+### Option 2: Local Development
+
+**Prerequisites:**
+- Go 1.21+ installed
+- Node.js 18+ and npm installed
+- PostgreSQL 15+ installed and running
+
+#### Step 1: Setup Database
+
+```bash
+# Create database
+psql -U postgres
+CREATE DATABASE notesdb;
+CREATE USER admin WITH PASSWORD '123456';
+GRANT ALL PRIVILEGES ON DATABASE notesdb TO admin;
+\q
+
+# Run initialization script
+psql -U admin -d notesdb -f init.sql
+```
+
+#### Step 2: Setup Backend
+
+```bash
+# Navigate to backend directory
 cd notes-backend
 
 # Install dependencies
 go mod download
 
-# Setup database (PostgreSQL harus running)
-# Edit .env dengan database credentials
+# Copy environment file
+cp .env.example .env
 
-# Run
+# Edit .env file with your database credentials
+# DATABASE_URL=postgres://admin:123456@localhost:5432/notesdb?sslmode=disable
+# PORT=8080
+# JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+# Run backend
 go run main.go
 ```
 
-#### Frontend
+Backend will start on **http://localhost:8080**
+
+#### Step 3: Setup Frontend
+
 ```bash
+# Open new terminal
+# Navigate to frontend directory
 cd notes-frontend
 
 # Install dependencies
 npm install
 
-# Create .env.local
-echo "NEXT_PUBLIC_API_URL=http://localhost:8080" > .env.local
+# Copy environment file
+cp .env.local.example .env.local
+
+# Edit .env.local file
+# NEXT_PUBLIC_API_URL=http://localhost:8080
 
 # Run development server
 npm run dev
 ```
 
-## 🔧 Configuration
+Frontend will start on **http://localhost:3000**
 
-### Environment Variables
+## 🔧 Contoh Environment Variables (.env)
 
-**Backend (.env)**
+#### Backend (.env)
+
+**For Docker deployment:**
 ```env
-DATABASE_URL=postgres://admin:123456@localhost:5433/notesdb?sslmode=disable
+# Database Configuration
+DATABASE_URL=postgres://admin:123456@postgres:5432/notesdb?sslmode=disable
+
+# Server Configuration
 PORT=8080
-JWT_SECRET=your-secret-key
+
+# JWT Secret (change this in production!)
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-min-32-chars
 ```
 
-**Frontend (.env.local)**
+**For local development:**
 ```env
+# Database Configuration (note: localhost instead of postgres)
+DATABASE_URL=postgres://admin:123456@localhost:5432/notesdb?sslmode=disable
+
+# Server Configuration
+PORT=8080
+
+# JWT Secret (change this in production!)
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-min-32-chars
+```
+
+> 📝 **Note:** File `.env.example` tersedia di folder `notes-backend/` sebagai template.
+
+#### Frontend (.env.local)
+
+**For Docker deployment:**
+```env
+# Backend API URL (using Docker service name)
+NEXT_PUBLIC_API_URL=http://backend:8080
+```
+
+**For local development:**
+```env
+# Backend API URL (using localhost)
 NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
 
-## 📚 API Documentation
+> 📝 **Note:** File `.env.local.example` tersedia di folder `notes-frontend/` sebagai template.
 
-### Authentication
 
-#### Register
-```http
-POST /register
-Content-Type: application/json
+## 📸 Screenshots
 
+### 1. Login Page
+![Login Page](screenshots/login.png)
+*User authentication with email and password*
+
+### 2. Register Page
+![Register Page](screenshots/register.png)
+*New user registration form*
+
+### 3. Dashboard - Notes List
+![Dashboard](screenshots/dashboard.png)
+*Main dashboard showing user's notes and shared notes*
+
+### 4. Create Note
+![Create Note](screenshots/create-note.png)
+*Form to create new note*
+
+### 5. Note Detail & Edit
+![Note Detail](screenshots/note-detail.png)
+*View and edit note details (owner only)*
+
+### 6. Database Logs
+![Database Logs](screenshots/logs.png)
+*HTTP request logs stored in PostgreSQL*
+
+> 📝 **Note:** Screenshots akan ditambahkan di folder `screenshots/` setelah deployment.
+
+## 📋 Logging System Examples
+
+### Log Entry Structure
+
+Setiap HTTP request akan dicatat ke database dengan struktur berikut:
+
+```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "password123"
+  "id": 1,
+  "datetime": "2025-10-15T11:25:30.123Z",
+  "method": "POST",
+  "endpoint": "/notes",
+  "headers": "{\"Content-Type\":\"application/json\",\"Authorization\":\"Bearer ***MASKED***\"}",
+  "payload": "{\"title\":\"My First Note\",\"content\":\"This is the content\"}",
+  "response": "{\"id\":1,\"title\":\"My First Note\",\"content\":\"This is the content\",\"user_id\":1,\"created_at\":\"2025-10-15T11:25:30.123Z\"}",
+  "status_code": 201
 }
 ```
 
-#### Login
-```http
-POST /login
-Content-Type: application/json
+### Sample Log Entries
 
+#### 1. User Registration
+```json
 {
-  "email": "john@example.com",
-  "password": "password123"
-}
-
-Response:
-{
-  "token": "eyJhbGciOiJIUzI1NiIs...",
-  "user": {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com"
-  }
+  "datetime": "2025-10-15 11:20:15",
+  "method": "POST",
+  "endpoint": "/register",
+  "headers": "{\"Content-Type\":\"application/json\"}",
+  "payload": "{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"password\":\"***MASKED***\"}",
+  "response": "{\"message\":\"User registered successfully\"}",
+  "status_code": 201
 }
 ```
 
-### Notes (Protected - Require JWT)
-
-#### Get All Notes
-```http
-GET /notes
-Authorization: Bearer {token}
-```
-
-#### Get Note by ID
-```http
-GET /notes/{id}
-Authorization: Bearer {token}
-```
-
-#### Create Note
-```http
-POST /notes
-Authorization: Bearer {token}
-Content-Type: application/json
-
+#### 2. User Login
+```json
 {
-  "title": "My Note",
-  "content": "Note content here"
+  "datetime": "2025-10-15 11:21:30",
+  "method": "POST",
+  "endpoint": "/login",
+  "headers": "{\"Content-Type\":\"application/json\"}",
+  "payload": "{\"email\":\"john@example.com\",\"password\":\"***MASKED***\"}",
+  "response": "{\"token\":\"eyJhbGciOiJIUzI1NiIs...\",\"user\":{\"id\":1,\"name\":\"John Doe\"}}",
+  "status_code": 200
 }
 ```
 
-#### Update Note
-```http
-PUT /notes/{id}
-Authorization: Bearer {token}
-Content-Type: application/json
-
+#### 3. Create Note (Authenticated)
+```json
 {
-  "title": "Updated Title",
-  "content": "Updated content"
+  "datetime": "2025-10-15 11:22:45",
+  "method": "POST",
+  "endpoint": "/notes",
+  "headers": "{\"Content-Type\":\"application/json\",\"Authorization\":\"Bearer ***MASKED***\"}",
+  "payload": "{\"title\":\"Meeting Notes\",\"content\":\"Discuss project requirements\"}",
+  "response": "{\"id\":1,\"title\":\"Meeting Notes\",\"user_id\":1,\"created_at\":\"2025-10-15T11:22:45Z\"}",
+  "status_code": 201
 }
 ```
 
-#### Delete Note
-```http
-DELETE /notes/{id}
-Authorization: Bearer {token}
+#### 4. Get All Notes
+```json
+{
+  "datetime": "2025-10-15 11:23:10",
+  "method": "GET",
+  "endpoint": "/notes",
+  "headers": "{\"Authorization\":\"Bearer ***MASKED***\"}",
+  "payload": "",
+  "response": "[{\"id\":1,\"title\":\"Meeting Notes\",\"content\":\"Discuss project requirements\",\"user_id\":1}]",
+  "status_code": 200
+}
 ```
 
-### Logs
-
-#### Get All Logs
-```http
-GET /admin/logs
+#### 5. Update Note
+```json
+{
+  "datetime": "2025-10-15 11:24:20",
+  "method": "PUT",
+  "endpoint": "/notes/1",
+  "headers": "{\"Content-Type\":\"application/json\",\"Authorization\":\"Bearer ***MASKED***\"}",
+  "payload": "{\"title\":\"Updated Meeting Notes\",\"content\":\"Updated content\"}",
+  "response": "{\"message\":\"Note updated successfully\"}",
+  "status_code": 200
+}
 ```
 
-## 🗄️ Database Schema
-
-### Users Table
-```sql
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+#### 6. Delete Note
+```json
+{
+  "datetime": "2025-10-15 11:25:00",
+  "method": "DELETE",
+  "endpoint": "/notes/1",
+  "headers": "{\"Authorization\":\"Bearer ***MASKED***\"}",
+  "payload": "",
+  "response": "{\"message\":\"Note deleted successfully\"}",
+  "status_code": 200
+}
 ```
 
-### Notes Table
-```sql
-CREATE TABLE notes (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id),
-    title VARCHAR(255) NOT NULL,
-    content TEXT,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-```
+### Viewing Logs
 
-### Logs Table
-```sql
-CREATE TABLE logs (
-    id SERIAL PRIMARY KEY,
-    datetime TIMESTAMP DEFAULT NOW(),
-    method VARCHAR(10),
-    endpoint VARCHAR(255),
-    headers TEXT,
-    payload TEXT,
-    response TEXT,
-    status_code INT
-);
-```
-
-## 🐳 Docker Commands
-
+**Via API:**
 ```bash
-# Start services
-docker-compose up -d
+curl http://localhost:8080/admin/logs
+```
 
-# Stop services
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# Rebuild services
-docker-compose up --build -d
-
-# Access database
+**Via Database:**
+```bash
+# Access PostgreSQL
 docker-compose exec postgres psql -U admin -d notesdb
 
-# Access backend shell
-docker-compose exec backend sh
+# Query logs
+SELECT id, datetime, method, endpoint, status_code 
+FROM logs 
+ORDER BY datetime DESC 
+LIMIT 10;
 ```
 
-## 🧪 Testing
-
-### Manual Testing
-
-1. **Register User**
-   - Go to http://localhost:3000/register
-   - Fill form and submit
-
-2. **Login**
-   - Go to http://localhost:3000/login
-   - Use registered credentials
-
-3. **Create Note**
-   - After login, use form in dashboard
-   - Submit note
-
-4. **View Notes**
-   - See "Your Notes" section
-   - See "Shared by Others" section
-
-5. **Edit/Delete**
-   - Click note to view detail
-   - Edit button appears for your notes
-   - Delete button in dashboard
-
-### API Testing with curl
-
-```bash
-# Register
-curl -X POST http://localhost:8080/register \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Test","email":"test@mail.com","password":"pass123"}'
-
-# Login
-curl -X POST http://localhost:8080/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@mail.com","password":"pass123"}'
-
-# Get notes (replace TOKEN)
-curl -X GET http://localhost:8080/notes \
-  -H "Authorization: Bearer TOKEN"
+**Sample Output:**
+```
+ id |        datetime         | method |  endpoint   | status_code 
+----+-------------------------+--------+-------------+-------------
+  6 | 2025-10-15 11:25:00.123 | DELETE | /notes/1    |         200
+  5 | 2025-10-15 11:24:20.456 | PUT    | /notes/1    |         200
+  4 | 2025-10-15 11:23:10.789 | GET    | /notes      |         200
+  3 | 2025-10-15 11:22:45.012 | POST   | /notes      |         201
+  2 | 2025-10-15 11:21:30.345 | POST   | /login      |         200
+  1 | 2025-10-15 11:20:15.678 | POST   | /register   |         201
 ```
 
-## 📊 Features Checklist
-
-### Backend
-- [x] User registration
-- [x] User login with JWT
-- [x] JWT middleware protection
-- [x] CRUD Notes endpoints
-- [x] Owner authorization
-- [x] Logging middleware
-- [x] Logs saved to database
-- [x] CORS configuration
-
-### Frontend
-- [x] Register page
-- [x] Login page
-- [x] Dashboard with notes list
-- [x] Create note form
-- [x] Note detail page
-- [x] Edit note functionality
-- [x] Delete note functionality
-- [x] JWT storage in localStorage
-- [x] Protected routes
-- [x] Modern UI design
-
-### Deployment
-- [x] Backend Dockerfile
-- [x] Frontend Dockerfile
-- [x] docker-compose.yml
-- [x] PostgreSQL with persistent volume
-- [x] Database initialization script
-- [x] Health checks
-- [x] Multi-stage builds
-
-## 🔐 Security Features
-
-- ✅ Password hashing with bcrypt
-- ✅ JWT token authentication
-- ✅ Protected API endpoints
-- ✅ Owner-only authorization for edit/delete
-- ✅ Authorization header masking in logs
-- ✅ CORS configuration
-- ✅ SQL injection prevention (parameterized queries)
-
-## 📝 Documentation Files
-
-- `README.md` - This file (overview)
-- `DOCKER_DEPLOYMENT_GUIDE.md` - **Complete Docker deployment guide** ⭐
-- `DEPLOYMENT_CHECKLIST.md` - **Step-by-step deployment checklist** ⭐
-- `PRESENTATION_GUIDE.md` - **Presentation template & tips** ⭐
-- `DOCKER_DEPLOYMENT.md` - Docker deployment details
-- `KONEKSI_FRONTEND_BACKEND.md` - Frontend-Backend connection details
-- `CHECKLIST_REQUIREMENTS.md` - Requirements checklist
-- `FIXED_HYDRATION_ERROR.md` - Hydration error fix documentation
-- `TEST_EDIT_NOTE.md` - Edit note troubleshooting guide
-
-## 🤝 Contributing
-
-This is a bootcamp test project. For educational purposes only.
-
-## 📄 License
-
-MIT License
-
-## 👨‍💻 Author
-
-Created for Bootcamp Selection Test
-
-## 🎯 Project Goals
-
-This project demonstrates:
-- Full-stack development skills
-- RESTful API design
-- JWT authentication implementation
-- Database design and management
-- Docker containerization
-- Modern web development practices
-- Clean code architecture
-
-## 🚀 Next Steps (Optional Improvements)
-
-- [ ] Upload gambar pada notes
-- [ ] Search and filter functionality
-- [ ] Categories/tags for notes
-- [ ] User profile management
-- [ ] Email verification
-- [ ] Password reset
-- [ ] Real-time updates with WebSocket
-- [ ] Unit tests
-- [ ] Integration tests
-- [ ] CI/CD pipeline
+**Security Features:**
+- ✅ Authorization headers are masked (JWT tokens tidak disimpan plaintext)
+- ✅ Passwords are masked in logs
+- ✅ Complete request tracking dengan timestamp UTC
 
 ---
 
-**Happy Coding! 🎉**
+**Created for Bootcamp Selection Test**
